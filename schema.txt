@@ -1,0 +1,99 @@
+# Database Schema Documentation
+
+## Overview
+
+This database schema supports the analysis of customer transaction behavior, financial product holdings, and merchant categorization. It consists of four main tables:
+
+1. **customer\_profile** — Stores demographic and profile information about customers.
+2. **product\_summary** — Stores financial product and loan balances for customers.
+3. **mcc\_category** — Contains merchant category codes and their hierarchical descriptions.
+4. **transactions** — Records transactional data associated with customers.
+
+---
+
+## Table Descriptions
+
+### 1. customer\_profile
+
+Stores static customer attributes for segmentation and profiling.
+
+| Column Name          | Data Type | Description                                             |
+| -------------------- | --------- | ------------------------------------------------------- |
+| CustomerID           | TEXT (PK) | Unique identifier for each customer                     |
+| CustomerTypeCode     | TEXT      | Customer category/type code                             |
+| ProfitCentre         | TEXT      | Profit center or business unit                          |
+| LOR\_Months          | INTEGER   | Length of relationship in months                        |
+| Gender               | TEXT      | Customer gender                                         |
+| Age                  | INTEGER   | Customer age in years                                   |
+| MaritalStatus        | TEXT      | Marital status (e.g., Single, Married)                  |
+| Income               | REAL      | Customer income amount                                  |
+| Emirate              | TEXT      | Emirate or geographic region                            |
+| NationalityRegion    | TEXT      | Customer nationality or regional origin                 |
+| Flag\_SalaryTransfer | INTEGER   | Boolean flag (0 or 1) indicating salary transfer status |
+
+---
+
+### 2. product\_summary
+
+Captures customer financial product data, loan balances, and counts.
+
+| Column Name               | Data Type     | Description                                   |
+| ------------------------- | ------------- | --------------------------------------------- |
+| CustomerID                | TEXT (PK, FK) | Foreign key to `customer_profile`             |
+| CC\_Limit                 | REAL          | Credit card limit                             |
+| CC\_SpendVolume           | REAL          | Credit card spend volume                      |
+| DBR\_Internal             | REAL          | Internal debt balance ratio or similar metric |
+| MO\_Disbursed             | REAL          | Mortgage amount disbursed                     |
+| AL\_Disbursed             | REAL          | Auto loan amount disbursed                    |
+| PL\_Disbursed             | REAL          | Personal loan amount disbursed                |
+| SL\_Disbursed             | REAL          | Student loan amount disbursed                 |
+| MO\_Balance               | REAL          | Mortgage outstanding balance                  |
+| AL\_Balance               | REAL          | Auto loan outstanding balance                 |
+| PL\_Balance               | REAL          | Personal loan outstanding balance             |
+| SL\_Balance               | REAL          | Student loan outstanding balance              |
+| MO\_Count                 | INTEGER       | Number of mortgage accounts                   |
+| AL\_Count                 | INTEGER       | Number of auto loan accounts                  |
+| PL\_Count                 | INTEGER       | Number of personal loan accounts              |
+| SL\_Count                 | INTEGER       | Number of student loan accounts               |
+| Total\_FD\_Count          | INTEGER       | Total fixed deposit count                     |
+| Total\_FD\_Balance        | REAL          | Total fixed deposit balance                   |
+| Total\_CASA\_Count        | INTEGER       | Total CASA (current/savings account) count    |
+| Total\_AVG\_CASA\_BALANCE | REAL          | Average CASA account balance                  |
+| TOTAL\_Products           | INTEGER       | Total financial products held by customer     |
+
+---
+
+### 3. mcc\_category
+
+Defines Merchant Category Codes (MCC) and their hierarchical categorization.
+
+| Column Name | Data Type | Description                                          |
+| ----------- | --------- | ---------------------------------------------------- |
+| MCC         | TEXT (PK) | Merchant Category Code (e.g., "5411")                |
+| MCC\_Name   | TEXT      | Descriptive name of the MCC (e.g., "Grocery Stores") |
+| MCG\_Name   | TEXT      | Merchant Category Group name (higher-level group)    |
+| Period      | TEXT      | Validity or reference period of this MCC data        |
+
+---
+
+### 4. transactions
+
+Stores transactional details for each customer interaction with merchants.
+
+| Column Name   | Data Type                   | Description                                           |
+| ------------- | --------------------------- | ----------------------------------------------------- |
+| TransactionID | INTEGER (PK, AUTOINCREMENT) | Unique transaction identifier                         |
+| CustomerID    | TEXT (FK)                   | References `customer_profile.CustomerID`              |
+| TxnDate       | TEXT                        | Transaction date (ISO 8601 format: YYYY-MM-DD)        |
+| Category      | TEXT                        | Transaction category or product type                  |
+| BillingAmount | REAL                        | Transaction amount billed                             |
+| TxnLoc        | TEXT                        | Location of the transaction                           |
+| MercCountry   | TEXT                        | Merchant country                                      |
+| Gateway       | TEXT                        | Payment gateway used                                  |
+| Channel       | TEXT                        | Channel of transaction (e.g., Online, POS)            |
+| MCC           | TEXT (FK)                   | Merchant Category Code, references `mcc_category.MCC` |
+| Description   | TEXT                        | Merchant or transaction description                   |
+| AcquirerBin   | TEXT                        | Acquirer BIN code                                     |
+
+---
+
